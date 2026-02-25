@@ -4,82 +4,91 @@
 <meta charset="UTF-8">
 <title>Taquilla de CineIM</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
 <style>
 body{
-    font-family: Arial;
+    margin:0;
+    font-family:Arial, sans-serif;
     background:#111;
     color:white;
-    margin:0;
 }
 header{
-    background:#c62828;
+    background:linear-gradient(90deg,#b71c1c,#e53935);
     padding:15px;
-    text-align:center;
-    font-size:28px;
-    font-weight:bold;
+    display:flex;
+    justify-content:center;
+}
+.logo{
+font-family:'Bebas Neue', sans-serif;
+font-size:48px;
+letter-spacing:4px;
+background:linear-gradient(90deg,#ffd700,#fff2a8,#ffc400,#ffd700);
+background-size:300% auto;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:goldShine 6s linear infinite;
+}
+@keyframes goldShine{
+0%{ background-position:0% center; }
+100%{ background-position:300% center; }
 }
 .container{ padding:20px; }
 
 .movies{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
 }
 .movie{
-    background:#222;
-    padding:15px;
-    border-radius:10px;
-    cursor:pointer;
-    transition:.3s;
+background:#222;
+padding:15px;
+border-radius:10px;
+cursor:pointer;
+transition:.25s;
 }
 .movie:hover{
-    transform:scale(1.05);
-    background:#333;
+transform:scale(1.05);
+background:#333;
 }
-#details{
-    margin-top:25px;
-    background:#1a1a1a;
-    padding:20px;
-    border-radius:12px;
-    display:none;
+
+.screen{
+text-align:center;
+margin:15px;
+padding:5px;
+background:#ddd;
+color:black;
+border-radius:5px;
 }
+
 .seats{
-    margin-top:15px;
-    display:grid;
-    grid-template-columns:repeat(8,30px);
-    gap:8px;
-    justify-content:center;
+display:grid;
+grid-template-columns:repeat(8,30px);
+gap:8px;
+justify-content:center;
 }
+
 .seat{
-    width:30px;
-    height:30px;
-    background:#555;
-    border-radius:5px;
-    cursor:pointer;
+width:30px;
+height:30px;
+background:#555;
+border-radius:5px;
+cursor:pointer;
 }
 .seat.selected{ background:#4caf50; }
 .seat.occupied{ background:#b71c1c; cursor:not-allowed; }
 
-.screen{
-    text-align:center;
-    margin:15px;
-    padding:5px;
-    background:#ddd;
-    color:black;
-    border-radius:5px;
-}
 button{
-    margin-top:15px;
-    padding:10px 15px;
-    border:none;
-    background:#c62828;
-    color:white;
-    border-radius:8px;
-    cursor:pointer;
+margin-top:15px;
+padding:10px 15px;
+border:none;
+background:#c62828;
+color:white;
+border-radius:8px;
+cursor:pointer;
 }
 button:hover{ background:#e53935; }
 
-/* modal pago */
 #paymentModal{
 display:none;
 position:fixed;
@@ -105,14 +114,62 @@ margin:6px;
 border-radius:6px;
 border:none;
 }
+/* header layout */
+.topbar{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:15px;
+background:linear-gradient(90deg,#b71c1c,#e53935);
+padding:15px;
+}
+
+/* imagen logo */
+.logoImg{
+height:70px;
+animation: logoFloat 3s ease-in-out infinite;
+}
+
+/* texto dorado brillante */
+.logoText{
+font-family:'Bebas Neue', sans-serif;
+font-size:48px;
+letter-spacing:4px;
+
+background:linear-gradient(90deg,#ffd700,#fff2a8,#ffc400,#ffd700);
+background-size:300% auto;
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation: goldShine 6s linear infinite;
+}
+
+/* animaciones */
+@keyframes goldShine{
+0%{ background-position:0% center;}
+100%{ background-position:300% center;}
+}
+
+@keyframes logoFloat{
+0%{ transform:translateY(0);}
+50%{ transform:translateY(-6px);}
+100%{ transform:translateY(0);}
+}
 </style>
 </head>
 
 <body>
 
-<header>🎬 Taquilla CineIM</header>
+<header class="topbar">
 
-<div class="container">
+<img src="https://cdn-icons-png.flaticon.com/512/744/744922.png" style="height:45px;">
+
+<div class="logoText">Taquilla de CineIM</div>
+
+</header>
+<!-- HOME -->
+<div id="homePage" class="container">
 
 <h2>Cartelera</h2>
 
@@ -139,20 +196,28 @@ border:none;
 </div>
 
 </div>
+</div>
 
-<div id="details">
-<h2 id="title"></h2>
-<p id="desc"></p>
+<!-- PAGE MOVIE -->
+<div id="moviePage" style="display:none; padding:30px; text-align:center;">
+
+<h1 id="movieTitle"></h1>
+<p id="movieDesc" style="max-width:600px;margin:auto;"></p>
+
+<button onclick="startSeats()">Elegir asientos</button>
+<button onclick="goHome()">⬅ Volver</button>
+
+<div id="seatSection" style="display:none;margin-top:30px;">
 
 <div class="screen">PANTALLA</div>
 <div class="seats" id="seats"></div>
 
-<p>Asientos seleccionados: <span id="count">0</span></p>
+<p>Asientos: <span id="count">0</span></p>
 <p>Total: $<span id="total">0</span></p>
 
 <button onclick="buy()">Comprar</button>
-</div>
 
+</div>
 </div>
 
 <!-- MODAL -->
@@ -161,8 +226,8 @@ border:none;
 
 <h2>Pago con Tarjeta</h2>
 
-<input id="name" placeholder="Nombre en tarjeta">
-<input id="number" placeholder="Número de tarjeta">
+<input id="name" placeholder="Nombre">
+<input id="number" placeholder="Número">
 <input id="date" placeholder="MM/AA">
 <input id="cvv" placeholder="CVV">
 
@@ -174,27 +239,40 @@ border:none;
 </div>
 </div>
 
+
+<!-- SCRIPT VA EXACTAMENTE AQUÍ -->
 <script>
-/* -------- DATOS -------- */
 const movies=[
-{title:"El Último Robot",desc:"En un futuro donde los humanos desaparecieron, el último robot intenta descubrir qué ocurrió mientras es perseguido por máquinas rebeldes."},
-{title:"Misterio en la Niebla",desc:"Un detective llega a un pueblo cubierto por niebla permanente donde los habitantes ocultan un secreto imposible."},
-{title:"Iron Man 19",desc:"Un hombre normal decide superarse y crea un traje especial para salvar al mundo."},
-{title:"Amor en Marte",desc:"Dos astronautas quedan atrapados en Marte y descubren que sobrevivir no es tan difícil como evitar enamorarse."}
+{title:"El Último Robot",desc:"En un futuro donde los humanos desaparecieron, el último robot intenta descubrir qué ocurrió."},
+{title:"Misterio en la Niebla",desc:"Un detective llega a un pueblo cubierto por niebla donde todos ocultan algo."},
+{title:"Iron Man 19",desc:"Un hombre crea un traje para salvar el mundo."},
+{title:"Amor en Marte",desc:"Dos astronautas quedan atrapados y el amor aparece."}
 ];
 
 let price=5;
 let selected=[];
 
-/* -------- MOSTRAR PELÍCULA -------- */
 function showMovie(i){
-document.getElementById("details").style.display="block";
-document.getElementById("title").innerText=movies[i].title;
-document.getElementById("desc").innerText=movies[i].desc;
+document.getElementById("homePage").style.display="none";
+document.getElementById("moviePage").style.display="block";
+
+document.getElementById("movieTitle").innerText=movies[i].title;
+document.getElementById("movieDesc").innerText=movies[i].desc;
+
+selected=[];
+update();
+}
+
+function goHome(){
+document.getElementById("moviePage").style.display="none";
+document.getElementById("homePage").style.display="block";
+}
+
+function startSeats(){
+document.getElementById("seatSection").style.display="block";
 createSeats();
 }
 
-/* -------- CREAR ASIENTOS -------- */
 function createSeats(){
 const container=document.getElementById("seats");
 container.innerHTML="";
@@ -212,9 +290,10 @@ if(seat.classList.contains("occupied")) return;
 
 seat.classList.toggle("selected");
 
-selected.includes(i)
-? selected=selected.filter(x=>x!==i)
-: selected.push(i);
+if(selected.includes(i))
+selected=selected.filter(x=>x!==i);
+else
+selected.push(i);
 
 update();
 };
@@ -223,54 +302,41 @@ container.appendChild(seat);
 }
 }
 
-/* -------- ACTUALIZAR CONTADOR -------- */
 function update(){
-document.getElementById("count").innerText=selected.length;
-document.getElementById("total").innerText=selected.length*price;
+document.getElementById("count").textContent=selected.length;
+document.getElementById("total").textContent=selected.length*price;
 }
 
-/* -------- ABRIR PAGO -------- */
 function buy(){
-if(selected.length===0) return alert("Selecciona al menos un asiento");
+if(selected.length===0){
+alert("Selecciona al menos un asiento");
+return;
+}
 document.getElementById("paymentModal").style.display="flex";
 }
 
-/* -------- CERRAR PAGO -------- */
 function closePay(){
 document.getElementById("paymentModal").style.display="none";
 }
 
 function processPayment(){
-
 let name=document.getElementById("name").value.trim();
 let num=document.getElementById("number").value.trim();
 let date=document.getElementById("date").value.trim();
 let cvv=document.getElementById("cvv").value.trim();
 let msg=document.getElementById("payMsg");
 
-if(!name || !num || !date || !cvv){
-msg.innerText="⚠ Completa todos los campos";
+if(!name||!num||!date||!cvv){
+msg.textContent="Completa todos los campos";
 msg.style.color="orange";
 return;
 }
 
-if(num.length<16 || isNaN(num)){
-msg.innerText="Número inválido";
-msg.style.color="red";
-return;
-}
-
-if(cvv.length<3 || isNaN(cvv)){
-msg.innerText="CVV inválido";
-msg.style.color="red";
-return;
-}
-
-msg.innerText="Pago aprobado ✔";
+msg.textContent="Pago aprobado ✔";
 msg.style.color="lightgreen";
 
 setTimeout(()=>{
-alert("🎟 Compra confirmada\nAsientos: "+selected.join(", "));
+alert("Compra confirmada\nAsientos: "+selected.join(", "));
 closePay();
 },1000);
 }
