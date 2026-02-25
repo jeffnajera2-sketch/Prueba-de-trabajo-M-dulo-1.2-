@@ -240,25 +240,27 @@ function closePay(){
 document.getElementById("paymentModal").style.display="none";
 }
 
-/* -------- PROCESAR PAGO -------- */
 function processPayment(){
-let name=nameField.value.trim();
-let num=number.value.trim();
-let date=dateField.value.trim();
-let cvv=cvvField.value.trim();
+
+let name=document.getElementById("name").value.trim();
+let num=document.getElementById("number").value.trim();
+let date=document.getElementById("date").value.trim();
+let cvv=document.getElementById("cvv").value.trim();
 let msg=document.getElementById("payMsg");
 
-if(!name||!num||!date||!cvv){
-msg.innerText="Completa todos los campos";
+if(!name || !num || !date || !cvv){
+msg.innerText="⚠ Completa todos los campos";
 msg.style.color="orange";
 return;
 }
-if(num.length<16||isNaN(num)){
+
+if(num.length<16 || isNaN(num)){
 msg.innerText="Número inválido";
 msg.style.color="red";
 return;
 }
-if(cvv.length<3||isNaN(cvv)){
+
+if(cvv.length<3 || isNaN(cvv)){
 msg.innerText="CVV inválido";
 msg.style.color="red";
 return;
