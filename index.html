@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taquilla de CineIM</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#111;
+    color:white;
+    margin:0;
+}
+header{
+    background:#c62828;
+    padding:15px;
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+}
+.container{
+    padding:20px;
+}
+.movies{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+.movie{
+    background:#222;
+    padding:15px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+.movie:hover{
+    transform:scale(1.05);
+    background:#333;
+}
+.movie h3{
+    margin:0;
+}
+#details{
+    margin-top:25px;
+    background:#1a1a1a;
+    padding:20px;
+    border-radius:12px;
+    display:none;
+}
+.seats{
+    margin-top:15px;
+    display:grid;
+    grid-template-columns:repeat(8,30px);
+    gap:8px;
+    justify-content:center;
+}
+.seat{
+    width:30px;
+    height:30px;
+    background:#555;
+    border-radius:5px;
+    cursor:pointer;
+}
+.seat.selected{ background:#4caf50; }
+.seat.occupied{ background:#b71c1c; cursor:not-allowed; }
+.screen{
+    text-align:center;
+    margin:15px;
+    padding:5px;
+    background:#ddd;
+    color:black;
+    border-radius:5px;
+}
+button{
+    margin-top:15px;
+    padding:10px 15px;
+    border:none;
+    background:#c62828;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+button:hover{ background:#e53935; }
+</style>
+</head>
+<body>
+
+<header>🎬 Taquilla CineIM</header>
+
+<div class="container">
+
+<h2>Cartelera</h2>
+
+<div class="movies">
+    <div class="movie" onclick="showMovie(0)">
+        <h3>El Último Robot</h3>
+        <p>Acción / Ciencia Ficción</p>
+    </div>
+
+    <div class="movie" onclick="showMovie(1)">
+        <h3>Misterio en la Niebla</h3>
+        <p>Suspenso</p>
+    </div>
+
+    <div class="movie" onclick="showMovie(2)">
+        <h3>Amor en Marte</h3>
+        <p>Romance / Sci-Fi</p>
+    </div>
+</div>
+
+<div id="details">
+    <h2 id="title"></h2>
+    <p id="desc"></p>
+
+    <div class="screen">PANTALLA</div>
+    <div class="seats" id="seats"></div>
+
+    <p>Asientos seleccionados: <span id="count">0</span></p>
+    <p>Total: $<span id="total">0</span></p>
+
+    <button onclick="buy()">Comprar</button>
+</div>
+
+</div>
+
+<script>
+const movies = [
+{
+title:"El Último Robot",
+desc:"En un futuro donde los humanos desaparecieron, el último robot intenta descubrir qué ocurrió mientras es perseguido por máquinas rebeldes."
+},
+{
+title:"Misterio en la Niebla",
+desc:"Un detective llega a un pueblo cubierto por niebla permanente donde los habitantes ocultan un secreto imposible."
+},
+{
+title:"Amor en Marte",
+desc:"Dos astronautas quedan atrapados en Marte y descubren que sobrevivir no es tan difícil como evitar enamorarse."
+}
+];
+
+let price = 5;
+let selected = [];
+
+function showMovie(i){
+document.getElementById("details").style.display="block";
+document.getElementById("title").innerText=movies[i].title;
+document.getElementById("desc").innerText=movies[i].desc;
+createSeats();
+}
+
+function createSeats(){
+const container=document.getElementById("seats");
+container.innerHTML="";
+selected=[];
+update();
+
+for(let i=0;i<40;i++){
+let seat=document.createElement("div");
+seat.classList.add("seat");
+
+if(Math.random()<0.2) seat.classList.add("occupied");
+
+seat.onclick=()=>{
+if(seat.classList.contains("occupied")) return;
+
+seat.classList.toggle("selected");
+
+if(selected.includes(i))
+selected=selected.filter(x=>x!==i);
+else
+selected.push(i);
+
+update();
+};
+
+container.appendChild(seat);
+}
+}
+
+function update(){
+document.getElementById("count").innerText=selected.length;
+document.getElementById("total").innerText=selected.length*price;
+}
+
+function buy(){
+if(selected.length===0){
+alert("Selecciona al menos un asiento");
+return;
+}
+alert("Compra realizada 🎟️\nAsientos: "+selected.join(", "));
+}
+</script>
+
+</body>
+</html>
