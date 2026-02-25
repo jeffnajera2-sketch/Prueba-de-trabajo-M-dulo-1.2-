@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taquilla de CineIM</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#111;
+    color:white;
+    margin:0;
+}
+header{
+background:#c62828;
+padding:15px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+font-size:32px;
+font-family:'Bebas Neue', sans-serif;
+letter-spacing:2px;
+}
+.container{ padding:20px; }
+
+.movies{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+.movie{
+    background:#222;
+    padding:15px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+.movie:hover{
+    transform:scale(1.05);
+    background:#333;
+}
+#details{
+    margin-top:25px;
+    background:#1a1a1a;
+    padding:20px;
+    border-radius:12px;
+    display:none;
+}
+.seats{
+    margin-top:15px;
+    display:grid;
+    grid-template-columns:repeat(8,30px);
+    gap:8px;
+    justify-content:center;
+}
+.seat{
+    width:30px;
+    height:30px;
+    background:#555;
+    border-radius:5px;
+    cursor:pointer;
+}
+.seat.selected{ background:#4caf50; }
+.seat.occupied{ background:#b71c1c; cursor:not-allowed; }
+
+.screen{
+    text-align:center;
+    margin:15px;
+    padding:5px;
+    background:#ddd;
+    color:black;
+    border-radius:5px;
+}
+button{
+    margin-top:15px;
+    padding:10px 15px;
+    border:none;
+    background:#c62828;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+button:hover{ background:#e53935; }
+
+/* modal pago */
+#paymentModal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#000000cc;
+align-items:center;
+justify-content:center;
+}
+.modalBox{
+background:#222;
+padding:25px;
+border-radius:12px;
+width:300px;
+text-align:center;
+}
+.modalBox input{
+width:90%;
+padding:8px;
+margin:6px;
+border-radius:6px;
+border:none;
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<header>
+<img src="c:\Users\ACER\Desktop\MouseWithoutBorders\logo.png" style="height:45px;">
+Taquilla CineIM
+</header>
+
+<div class="container">
+
+<h2>Cartelera</h2>
+
+<div class="movies">
+
+<div class="movie" onclick="showMovie(0)">
+<h3>El Último Robot</h3>
+<p>Acción / Ciencia Ficción</p>
+</div>
+
+<div class="movie" onclick="showMovie(1)">
+<h3>Misterio en la Niebla</h3>
+<p>Suspenso</p>
+</div>
+
+<div class="movie" onclick="showMovie(2)">
+<h3>Iron Man 19</h3>
+<p>Acción</p>
+</div>
+
+<div class="movie" onclick="showMovie(3)">
+<h3>Amor en Marte</h3>
+<p>Romance / Sci-Fi</p>
+</div>
+
+</div>
+
+<div id="details">
+<h2 id="title"></h2>
+<p id="desc"></p>
+
+<div class="screen">PANTALLA</div>
+<div class="seats" id="seats"></div>
+
+<p>Asientos seleccionados: <span id="count">0</span></p>
+<p>Total: $<span id="total">0</span></p>
+
+<button onclick="buy()">Comprar</button>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div id="paymentModal">
+<div class="modalBox">
+
+<h2>Pago con Tarjeta</h2>
+
+<input id="name" placeholder="Nombre en tarjeta">
+<input id="number" placeholder="Número de tarjeta">
+<input id="date" placeholder="MM/AA">
+<input id="cvv" placeholder="CVV">
+
+<button onclick="processPayment()">Pagar</button>
+<button onclick="closePay()">Cancelar</button>
+
+<p id="payMsg"></p>
+
+</div>
+</div>
+
+<script>
+/* -------- DATOS -------- */
+const movies=[
+{title:"El Último Robot",desc:"En un futuro donde los humanos desaparecieron, el último robot intenta descubrir qué ocurrió mientras es perseguido por máquinas rebeldes."},
+{title:"Misterio en la Niebla",desc:"Un detective llega a un pueblo cubierto por niebla permanente donde los habitantes ocultan un secreto imposible."},
+{title:"Iron Man 19",desc:"Un hombre normal decide superarse y crea un traje especial para salvar al mundo."},
+{title:"Amor en Marte",desc:"Dos astronautas quedan atrapados en Marte y descubren que sobrevivir no es tan difícil como evitar enamorarse."}
+];
+
+let price=5;
+let selected=[];
+
+/* -------- MOSTRAR PELÍCULA -------- */
+function showMovie(i){
+document.getElementById("details").style.display="block";
+document.getElementById("title").innerText=movies[i].title;
+document.getElementById("desc").innerText=movies[i].desc;
+createSeats();
+}
+
+/* -------- CREAR ASIENTOS -------- */
+function createSeats(){
+const container=document.getElementById("seats");
+container.innerHTML="";
+selected=[];
+update();
+
+for(let i=0;i<40;i++){
+let seat=document.createElement("div");
+seat.className="seat";
+
+if(Math.random()<0.2) seat.classList.add("occupied");
+
+seat.onclick=()=>{
+if(seat.classList.contains("occupied")) return;
+
+seat.classList.toggle("selected");
+
+selected.includes(i)
+? selected=selected.filter(x=>x!==i)
+: selected.push(i);
+
+update();
+};
+
+container.appendChild(seat);
+}
+}
+
+/* -------- ACTUALIZAR CONTADOR -------- */
+function update(){
+document.getElementById("count").innerText=selected.length;
+document.getElementById("total").innerText=selected.length*price;
+}
+
+/* -------- ABRIR PAGO -------- */
+function buy(){
+if(selected.length===0) return alert("Selecciona al menos un asiento");
+document.getElementById("paymentModal").style.display="flex";
+}
+
+/* -------- CERRAR PAGO -------- */
+function closePay(){
+document.getElementById("paymentModal").style.display="none";
+}
+
+function processPayment(){
+
+let name=document.getElementById("name").value.trim();
+let num=document.getElementById("number").value.trim();
+let date=document.getElementById("date").value.trim();
+let cvv=document.getElementById("cvv").value.trim();
+let msg=document.getElementById("payMsg");
+
+if(!name || !num || !date || !cvv){
+msg.innerText="⚠ Completa todos los campos";
+msg.style.color="orange";
+return;
+}
+
+if(num.length<16 || isNaN(num)){
+msg.innerText="Número inválido";
+msg.style.color="red";
+return;
+}
+
+if(cvv.length<3 || isNaN(cvv)){
+msg.innerText="CVV inválido";
+msg.style.color="red";
+return;
+}
+
+msg.innerText="Pago aprobado ✔";
+msg.style.color="lightgreen";
+
+setTimeout(()=>{
+alert("🎟 Compra confirmada\nAsientos: "+selected.join(", "));
+closePay();
+},1000);
+}
+</script>
+
+</body>
+</html>
